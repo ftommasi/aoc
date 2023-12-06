@@ -1,0 +1,7 @@
+use std::fs;
+
+pub fn read_entire_file(path : &str) -> Vec<&str>{
+    let entire_file = String::from(fs::read_to_string(path).expect("input file to exist"));
+    let lines : Vec<&str> = entire_file.split("\n").collect();
+    Vec::new(lines)
+}
