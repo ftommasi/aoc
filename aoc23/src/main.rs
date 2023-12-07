@@ -11,8 +11,8 @@ pub fn read_entire_file(path : &str) -> Vec<String>{
         .collect()
 }
 fn main() {
-    day1_part1();
-    day1_part2();
+    day2_part1();
+    //day2_part2();
 }
 
 pub fn day1_part1() -> String{
@@ -280,4 +280,54 @@ pub fn day1_part2() -> String{
     }
     println!("{}",sum);
     sum.to_string()
+}
+
+pub fn day2_part1() -> String{
+    //let lines = read_entire_file("../input/day2_ex.txt");
+    let lines = read_entire_file("../input/day2.txt");
+    let mut sum = 0;
+    for line in lines{
+        let mut match_info = line.split(":");
+        let game_id = match_info.clone().nth(0).expect("all lines to habe :").split(" ").nth(1).clone().expect("the line to start as 'Game^x'");
+        let matches = match_info.clone().nth(1).expect("all lines to have a ':')");
+        let mut red_remaining = 12;
+        let mut green_remaining = 13;
+        let mut blue_remaining = 14;
+
+        for set in matches.split(";"){
+            let cubes = set.split(", ");
+            for cube in cubes{
+                let mut count_color = cube.split(" "); // a rust magician pl0x explain why this
+                                                       // needs a mut
+                match count_color.clone().nth(1).expect("A space to separate count and color"){
+                    "green" => {
+                        green_remaining -= count_color.clone().nth(0).expect("a space to separate count and color").parse::<i32>().expect("a valid number of cubes");
+                    },
+                    "red" => {
+                        red_remaining -= count_color.clone().nth(0).expect("a space to separate count and color").parse::<i32>().expect("a valid number of cubes");
+                    },
+                    "blue" => {
+                        blue_remaining -= count_color.clone().nth(0).expect("a space to separate count and color").parse::<i32>().expect("a valid number of cubes");
+                    },
+                    _ => {
+                    //    println!("Unexpected color. probably an error parsing/splitting the line string");
+                    }
+                }
+
+
+            }
+        }
+        if green_remaining >= 0 && red_remaining >= 0 && blue_remaining >= 0{
+            //this game is valid. Count it
+            //println!("match {} is valid ({})",game_id,line);
+            let game_id_val = game_id.parse::<i32>().expect("game_id to be a valid number");
+            sum += game_id_val;
+        }else{
+            println!("match {} is not valid ({})",game_id,line);
+            println!("b:{} r:{} g:{}",blue_remaining,red_remaining,green_remaining);
+        }
+
+    }
+    println!("{}",sum);
+    String::from("123")
 }
