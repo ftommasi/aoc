@@ -287,27 +287,43 @@ pub fn day2_part1() -> String{
     let lines = read_entire_file("../input/day2.txt");
     let mut sum = 0;
     for line in lines{
-        let mut match_info = line.split(":");
+        let match_info = line.split(": ");
         let game_id = match_info.clone().nth(0).expect("all lines to habe :").split(" ").nth(1).clone().expect("the line to start as 'Game^x'");
         let matches = match_info.clone().nth(1).expect("all lines to have a ':')");
+
         let mut red_remaining = 12;
         let mut green_remaining = 13;
         let mut blue_remaining = 14;
 
-        for set in matches.split(";"){
+        let mut red_found = 0;
+        let mut green_found = 0;
+        let mut blue_found = 0;
+
+        for set in matches.split("; "){
             let cubes = set.split(", ");
             for cube in cubes{
-                let mut count_color = cube.split(" "); // a rust magician pl0x explain why this
+                let count_color = cube.split(" "); // a rust magician pl0x explain why this
                                                        // needs a mut
+                //println!("> '{}'", cube);
                 match count_color.clone().nth(1).expect("A space to separate count and color"){
                     "green" => {
-                        green_remaining -= count_color.clone().nth(0).expect("a space to separate count and color").parse::<i32>().expect("a valid number of cubes");
+                        let cur_green_seen = count_color.clone().nth(0).expect("a space to separate count and color").parse::<i32>().expect("a valid number of cubes");
+                        green_remaining -= cur_green_seen;
+                        green_found += cur_green_seen;
+                        //println!("found {} green",cur_green_seen);
+                        
                     },
                     "red" => {
-                        red_remaining -= count_color.clone().nth(0).expect("a space to separate count and color").parse::<i32>().expect("a valid number of cubes");
+                        let cur_red_seen = count_color.clone().nth(0).expect("a space to separate count and color").parse::<i32>().expect("a valid number of cubes");
+                        red_remaining -= cur_red_seen;
+                        red_found += cur_red_seen;
+                        //println!("found {} red",cur_red_seen);
                     },
                     "blue" => {
-                        blue_remaining -= count_color.clone().nth(0).expect("a space to separate count and color").parse::<i32>().expect("a valid number of cubes");
+                        let cur_blue_seen = count_color.clone().nth(0).expect("a space to separate count and color").parse::<i32>().expect("a valid number of cubes");
+                        blue_remaining -= cur_blue_seen;
+                        blue_found += cur_blue_seen;
+                        //println!("found {} blue",cur_blue_seen);
                     },
                     _ => {
                     //    println!("Unexpected color. probably an error parsing/splitting the line string");
@@ -317,14 +333,22 @@ pub fn day2_part1() -> String{
 
             }
         }
+        println!("######");
+        println!("# {}",line);
+        println!("> Game {}, red: 12 ({}), green: 13 ({}), blue: 14 ({})",game_id, red_found,green_found,blue_found);
+        println!("######");
         if green_remaining >= 0 && red_remaining >= 0 && blue_remaining >= 0{
             //this game is valid. Count it
-            //println!("match {} is valid ({})",game_id,line);
+            println!("match {} is  valid ({})",game_id,line);
+            println!("b:{} r:{} g:{}",blue_remaining,red_remaining,green_remaining);
+            println!("seen b: {}, r: {}, g: {}",blue_found,red_found,green_found);
+            
             let game_id_val = game_id.parse::<i32>().expect("game_id to be a valid number");
             sum += game_id_val;
         }else{
             println!("match {} is not valid ({})",game_id,line);
             println!("b:{} r:{} g:{}",blue_remaining,red_remaining,green_remaining);
+            println!("seen b: {}, r: {}, g: {}",blue_found,red_found,green_found);
         }
 
     }
